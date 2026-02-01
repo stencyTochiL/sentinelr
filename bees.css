@@ -1,0 +1,50 @@
+/* =========================
+   🐝 BEE BACKGROUND
+========================= */
+
+#beeBackground {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+/* Bee body */
+.bee {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: radial-gradient(circle at 30% 30%, #fff 2px, #ffcc00 45%);
+    border-radius: 50%;
+    box-shadow:
+        -4px 0 0 -2px #000,
+         4px 0 0 -2px #000;
+    animation: fly linear infinite;
+    opacity: 0.85;
+}
+
+/* Bee wings */
+.bee::before,
+.bee::after {
+    content: "";
+    position: absolute;
+    width: 7px;
+    height: 5px;
+    background: rgba(255,255,255,0.85);
+    border-radius: 50%;
+    top: -4px;
+}
+
+.bee::before { left: -4px; }
+.bee::after { right: -4px; }
+
+/* Flying motion */
+@keyframes fly {
+    from {
+        transform: translate(0, 0);
+    }
+    to {
+        transform: translate(35vw, -120vh);
+    }
+}
