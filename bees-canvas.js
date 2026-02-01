@@ -1,8 +1,18 @@
-/* =================================
-   🐝 CINEMATIC CANVAS BEE SYSTEM
+/* ===============================
+   SENTINELR – CINEMATIC BEE SYSTEM
+   FPS-safe | Realistic | Canvas
 ================================= */
 
-const canvas = document.getElementById("beeCanvas");
+const canvas = document.createElement("canvas");
+document.body.appendChild(canvas);
+canvas.style.position = "fixed";
+canvas.style.top = "0";
+canvas.style.left = "0";
+canvas.style.width = "100vw";
+canvas.style.height = "100vh";
+canvas.style.pointerEvents = "none";
+canvas.style.zIndex = "2";
+
 const ctx = canvas.getContext("2d");
 
 let w, h;
@@ -13,151 +23,222 @@ function resize() {
 window.addEventListener("resize", resize);
 resize();
 
-/* -------------------------
-   🌐 SEASONAL THEMES
--------------------------- */
-const SEASON = "auto"; // auto | day | rain | sunset | harmattan
+/* ===============================
+   PERFORMANCE CONTROL
+================================= */
+const isMobile = window.innerWidth < 768;
+const BEE_COUNT = isMobile ? 6 : 10;
 
-function getTheme() {
-    if (SEASON !== "auto") return SEASON;
-    const hour = new Date().getHours();
-    if (hour < 7) return "harmattan";
-    if (hour < 12) return "day";
-    if (hour < 18) return "sunset";
-    return "rain";
-}
+/* ===============================
+   HERO DEPTH ZONE
+================================= */
+const heroZone = {
+    x: w * 0.5,
+    y: h * 0.28,
+    radius: Math.min(w, h) * 0.35
+};
 
-const theme = getTheme();
-
-/* -------------------------
-   🎯 Mouse interaction
--------------------------- */
+/* ===============================
+   MOUSE TRACKING (QUEEN)
+================================= */
 const mouse = { x: w / 2, y: h / 2 };
 window.addEventListener("mousemove", e => {
     mouse.x = e.clientX;
     mouse.y = e.clientY;
 });
 
-/* -------------------------
-   🌻 Invisible flowers
--------------------------- */
-const flowers = Array.from({ length: 4 }, () => ({
-    x: Math.random() * w * 0.8 + w * 0.1,
-    y: Math.random() * h * 0.4 + h * 0.2
+/* ===============================
+   INVISIBLE FLOWERS
+================================= */
+const flowers = Array.from({ length: 8 }, () => ({
+    x: Math.random() * w,
+    y: heroZone.y + Math.random() * heroZone.radius
 }));
 
-/* -------------------------
-   🐝 Bee Class
--------------------------- */
+/* ===============================
+   BEE CLASS
+================================= */
 class Bee {
     constructor(isQueen = false) {
         this.isQueen = isQueen;
-        this.size = isQueen ? 26 : 18 + Math.random() * 6;
+
+        this.size = isQueen ? 34 : 22 + Math.random() * 6;
         this.x = Math.random() * w;
         this.y = Math.random() * h;
+
         this.vx = Math.random() * 0.6 - 0.3;
         this.vy = Math.random() * 0.6 - 0.3;
+
+        this.flap = Math.random() * Math.PI * 2;
+        this.flapSpeed = isQueen ? 0.25 : 0.55 + Math.random() * 0.35;
+
+        this.vibration = Math.random() * 1000;
+
         this.flower = flowers[Math.floor(Math.random() * flowers.length)];
+
+        this.landed = false;
+        this.landTimer = 600 + Math.random() * 1200;
     }
 
-    update() {
-        // Hover around flower
-        this.vx += (this.flower.x - this.x) * 0.0003;
-        this.vy += (this.flower.y - this.y) * 0.0003;
-
-        // Mouse reaction
-        const dx = this.x - mouse.x;
-        const dy = this.y - mouse.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 150) {
-            this.vx += dx * 0.002;
-            this.vy += dy * 0.002;
+    update(delta) {
+        /* 👑 QUEEN FOLLOWS CURSOR */
+        if (this.isQueen) {
+            this.vx += (mouse.x - this.x) * 0.0006;
+            this.vy += (mouse.y - this.y) * 0.0006;
+        } else {
+            /* 🌻 FLOWER ATTRACTION */
+            this.vx += (this.flower.x - this.x) * 0.00025;
+            this.vy += (this.flower.y - this.y) * 0.00025;
         }
 
-        this.x += this.vx;
-        this.y += this.vy;
+        /* 👑 ESCORT BEHAVIOR */
+        if (!this.isQueen) {
+            const queen = bees[0];
+            const dx = queen.x - this.x;
+            const dy = queen.y - this.y;
+            const dist = Math.hypot(dx, dy);
+            if (dist < 200) {
+                this.vx += dx * 0.0004;
+                this.vy += dy * 0.0004;
+            }
+        }
+
+        /* 🌻 LANDING LOGIC */
+        this.landTimer -= delta;
+        if (this.landTimer < 0) {
+            this.landed = !this.landed;
+            this.landTimer = this.landed ? 600 : 1200 + Math.random() * 1000;
+        }
+
+        if (!this.landed) {
+            this.x += this.vx;
+            this.y += this.vy;
+        }
+
+        this.vx *= 0.96;
+        this.vy *= 0.96;
+
+        this.flap += this.flapSpeed;
+        this.vibration += 50;
     }
 
     draw() {
+        const speed = Math.hypot(this.vx, this.vy);
+        const tilt = Math.atan2(this.vy, this.vx);
+
+        /* 🎯 DEPTH OF FIELD */
+        const dx = this.x - heroZone.x;
+        const dy = this.y - heroZone.y;
+        const dist = Math.hypot(dx, dy);
+        const focus = Math.max(0, 1 - dist / heroZone.radius);
+        const blur = (1 - focus) * 2.4;
+
         ctx.save();
         ctx.translate(this.x, this.y);
+        ctx.rotate(tilt * 0.4);
 
-        // Blur depth
-        ctx.globalAlpha = this.isQueen ? 0.9 : 0.65;
+        ctx.filter = `blur(${blur}px)`;
+        ctx.globalAlpha = this.isQueen ? 0.95 : 0.55 + focus * 0.35;
 
-        // Body
+        /* 🪽 REALISTIC WINGS */
+        const microJitter = Math.sin(this.vibration) * 0.18;
+        const flapAmount = this.landed ? 0 : Math.sin(this.flap) * 0.95;
+
+        if (!this.landed) {
+            ctx.fillStyle = "rgba(255,255,255,0.55)";
+            ctx.filter += " blur(1.3px)";
+
+            // Left wing
+            ctx.save();
+            ctx.rotate(-flapAmount + microJitter);
+            ctx.beginPath();
+            ctx.ellipse(
+                -this.size * 0.5,
+                -this.size * 0.7,
+                this.size * 0.75,
+                this.size * 0.35,
+                0, 0, Math.PI * 2
+            );
+            ctx.fill();
+            ctx.restore();
+
+            // Right wing
+            ctx.save();
+            ctx.rotate(flapAmount - microJitter);
+            ctx.beginPath();
+            ctx.ellipse(
+                this.size * 0.5,
+                -this.size * 0.7,
+                this.size * 0.75,
+                this.size * 0.35,
+                0, 0, Math.PI * 2
+            );
+            ctx.fill();
+            ctx.restore();
+        }
+
+        ctx.filter = "none";
+
+        /* 🐝 BODY */
         ctx.fillStyle = "#ffcc00";
         ctx.beginPath();
         ctx.ellipse(0, 0, this.size, this.size * 0.7, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        // Stripes
+        /* STRIPES */
         ctx.fillStyle = "#000";
-        ctx.fillRect(-this.size * 0.4, -this.size * 0.3, this.size * 0.15, this.size * 0.6);
-        ctx.fillRect(this.size * 0.1, -this.size * 0.3, this.size * 0.15, this.size * 0.6);
-
-        // Wings
-        ctx.fillStyle = "rgba(255,255,255,0.7)";
-        ctx.beginPath();
-        ctx.ellipse(-this.size * 0.5, -this.size * 0.6, this.size * 0.5, this.size * 0.3, 0, 0, Math.PI * 2);
-        ctx.ellipse(this.size * 0.5, -this.size * 0.6, this.size * 0.5, this.size * 0.3, 0, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.fillRect(-this.size * 0.45, -this.size * 0.3, this.size * 0.2, this.size * 0.6);
+        ctx.fillRect(this.size * 0.1, -this.size * 0.3, this.size * 0.2, this.size * 0.6);
 
         ctx.restore();
     }
 }
 
-/* -------------------------
-   🐝 Bee Population
--------------------------- */
-const isMobile = window.innerWidth < 768;
+/* ===============================
+   CREATE BEES
+================================= */
 const bees = [];
+bees.push(new Bee(true)); // 👑 QUEEN
 
-const BEE_COUNT = isMobile ? 5 : 8;
-for (let i = 0; i < BEE_COUNT; i++) bees.push(new Bee());
-
-// 👑 Queen bee near logo
-const queen = new Bee(true);
-queen.x = w * 0.15;
-queen.y = 80;
-bees.push(queen);
-
-/* -------------------------
-   🌐 Atmospheric Effects
--------------------------- */
-function atmosphere() {
-    if (theme === "harmattan") {
-        ctx.fillStyle = "rgba(240,230,200,0.03)";
-        ctx.fillRect(0, 0, w, h);
-    }
-    if (theme === "sunset") {
-        ctx.fillStyle = "rgba(255,140,80,0.02)";
-        ctx.fillRect(0, 0, w, h);
-    }
-    if (theme === "rain") {
-        ctx.strokeStyle = "rgba(200,200,255,0.08)";
-        for (let i = 0; i < 40; i++) {
-            const x = Math.random() * w;
-            const y = Math.random() * h;
-            ctx.beginPath();
-            ctx.moveTo(x, y);
-            ctx.lineTo(x + 3, y + 12);
-            ctx.stroke();
-        }
-    }
+for (let i = 1; i < BEE_COUNT; i++) {
+    bees.push(new Bee());
 }
 
-/* -------------------------
-   ⚡ Animation Loop
--------------------------- */
-function animate() {
-    ctx.clearRect(0, 0, w, h);
+/* ===============================
+   ATMOSPHERE (SUN / DUST)
+================================= */
+function atmosphere() {
+    const grad = ctx.createRadialGradient(
+        heroZone.x, heroZone.y, 0,
+        heroZone.x, heroZone.y, heroZone.radius
+    );
+    grad.addColorStop(0, "rgba(255,220,150,0.04)");
+    grad.addColorStop(1, "rgba(255,255,255,0)");
+
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+}
+
+/* ===============================
+   ANIMATION LOOP (MOTION BLUR)
+================================= */
+let lastTime = performance.now();
+function animate(now) {
+    const delta = now - lastTime;
+    lastTime = now;
+
+    /* 💨 TRAILS */
+    ctx.fillStyle = "rgba(255,255,255,0.06)";
+    ctx.fillRect(0, 0, w, h);
+
     atmosphere();
+
     bees.forEach(b => {
-        b.update();
+        b.update(delta);
         b.draw();
     });
+
     requestAnimationFrame(animate);
 }
 
-animate();
+requestAnimationFrame(animate);
