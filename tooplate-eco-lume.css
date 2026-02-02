@@ -19,12 +19,16 @@ You said:
 	--glow-green: rgba(0, 255, 136, 0.3);
 	--glow-blue: rgba(0, 212, 255, 0.3);
 }
-
 body {
     font-family: 'Inter', sans-serif;
-    background: linear-gradient(to right, #8b0000, #00008b);
+    background: linear-gradient(
+        to right,
+        #8b0000 0%,    
+        #8b0000 40%,     
+        rgba(0, 0, 70, 0.9) 100%  
+    );
     color: #ffffff;
-    overflow-x: hidden; /* Prevent horizontal scroll */
+    overflow-x: hidden;
     position: relative;
     margin: 0;
 }
@@ -1698,6 +1702,7 @@ footer {
     pointer-events: none;
     filter: blur(0.8px);
 }
+
 
 
 
