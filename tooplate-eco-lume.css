@@ -22,7 +22,7 @@ You said:
 
 body {
 	font-family: 'Inter', sans-serif;
-	background: linear-gradient(135deg, #ff0000 0%, #ffeb00 50%, #1e90ff 100%);
+    background: linear-gradient(to right, #CC5500 0%, #000033 100%);
 	color: #ffffff;
 	overflow-x: hidden;
 	position: relative;
@@ -1689,5 +1689,6 @@ footer {
     pointer-events: none;
     filter: blur(0.8px);
 }
+
 
 
