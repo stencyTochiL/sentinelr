@@ -311,3 +311,8 @@ if (previewModal) {
       if (endX - previewStartX > 50) changeImage(-1);
    });
 }
+
+const images = [
+    '1.png', '2.png', '3.png', '4.png',
+    '1.1.png', '2.1.png', '3.1.png', '6.png', '7.png'
+];
