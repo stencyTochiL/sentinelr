@@ -24,10 +24,10 @@ body {
     font-family: 'Inter', sans-serif;
     background: linear-gradient(to right, #8b0000, #00008b);
     color: #ffffff;
-    overflow-x: hidden;
+    overflow-x: hidden; /* Prevent horizontal scroll */
     position: relative;
+    margin: 0;
 }
-
 
 p a {
 	color: #ffffff;
@@ -177,18 +177,20 @@ p a:hover {
 }
 
 
-/* Navigation */
 nav {
-	position: fixed;
-	top: 0;
-	width: 100%;
-	padding: 20px 40px;
-	background: rgba(10, 26, 10, 0.8);
-	backdrop-filter: blur(20px);
-	border-bottom: 1px solid rgba(0, 255, 136, 0.2);
-	z-index: 1000;
-	transition: all 0.4s ease;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5); /* semi-transparent over gradient */
+    display: flex;
+    justify-content: center; /* center nav content */
+    padding: 15px 20px;
+    box-sizing: border-box; /* ensure padding is included in width */
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    overflow: hidden; /* fix overflow issues */
 }
+
 
 nav.scrolled {
 	padding: 15px 40px;
@@ -197,13 +199,14 @@ nav.scrolled {
 }
 
 .nav-container {
-	max-width: 1400px;
-	margin: 0 auto;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
+    width: 100%;
+    max-width: 1400px; /* limits navbar width */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    box-sizing: border-box;
 }
-
 /* Logo container */
 .logo {
     display: flex;
@@ -211,13 +214,12 @@ nav.scrolled {
     gap: 10px;
 }
 
-/* Logo image */
-.logo-image {
-    width: 38px;          
-    height: 38px;
-    object-fit: contain;
-    opacity: 0.85;        /* slightly transparent */
+.logo img {
+    height: 35px;
+    width: auto;
+    opacity: 0.9; 
 }
+
 
 /* Prevent navbar overflow */
 nav {
@@ -277,15 +279,11 @@ nav {
 	background-clip: text;
 }
 
-.nav-menu {
-	display: flex;
-	list-style: none;
-	gap: 8px;
-	background: rgba(255, 255, 255, 0.05);
-	padding: 8px;
-	border-radius: 50px;
-	border: 1px solid rgba(0, 255, 136, 0.2);
-	backdrop-filter: blur(20px);
+..nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 15px;
+    flex-wrap: wrap; 
 }
 
 .nav-menu a {
@@ -1665,13 +1663,17 @@ footer {
 .preview-nav.prev { left: 25px; }
 .preview-nav.next { right: 25px; }
 
-/* ================= Mobile Optimization ================= */
 @media (max-width: 768px) {
-    .logo-image {
-        width: 30px;
-        height: 30px;
+    .nav-menu {
+        flex-direction: column;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        position: fixed;
+        top: 60px;
+        left: -100%;
+        transition: left 0.3s ease;
+        padding: 20px;
     }
-}
 
 
 /* ================= Scrollbar Cleanup ================= */
@@ -1696,6 +1698,7 @@ footer {
     pointer-events: none;
     filter: blur(0.8px);
 }
+
 
 
 
