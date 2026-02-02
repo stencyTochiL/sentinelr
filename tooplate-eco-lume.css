@@ -206,14 +206,15 @@ nav.scrolled {
 .logo {
     display: flex;
     align-items: center;
-    gap: 8px; /* smaller gap so logo sits close to text */
+    gap: 8px; /* spacing between logo image, icon, and text */
 }
 
 .logo-image {
-    width: 30px;  /* smaller logo width */
-    height: 30px; /* smaller logo height */
+    width: 30px;  /* small size */
+    height: 30px;
     object-fit: contain;
 }
+
 
 
 .logo-icon {
@@ -1689,6 +1690,7 @@ footer {
     pointer-events: none;
     filter: blur(0.8px);
 }
+
 
 
 
