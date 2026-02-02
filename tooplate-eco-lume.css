@@ -21,11 +21,11 @@ You said:
 }
 
 body {
-	font-family: 'Inter', sans-serif;
-background: linear-gradient(to right, #8b0000, #00008b)
-	color: #ffffff;
-	overflow-x: hidden;
-	position: relative;
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(to right, #8b0000, #00008b);
+    color: #ffffff;
+    overflow-x: hidden;
+    position: relative;
 }
 
 
@@ -1696,6 +1696,7 @@ footer {
     pointer-events: none;
     filter: blur(0.8px);
 }
+
 
 
 
