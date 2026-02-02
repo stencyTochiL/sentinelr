@@ -1,5 +1,6 @@
 /* ===============================
-   CUTE CARTOON BEE (BLURRY STYLE)
+   CUTE CARTOON BEE (MASCOT STYLE)
+   Matches reference image
 ================================ */
 
 const canvas = document.createElement("canvas");
@@ -63,7 +64,7 @@ function update() {
 }
 
 /* ===============================
-   DRAW CARTOON BEE (BLURRY)
+   DRAW CARTOON BEE
 ================================ */
 function drawBee() {
     const floatY = Math.sin(bee.bob) * 6;
@@ -72,15 +73,12 @@ function drawBee() {
     ctx.save();
     ctx.translate(bee.x, bee.y + floatY);
 
-    // Make the bee slightly blurry and blended into the background
-    ctx.filter = "blur(3px)";
-    ctx.globalAlpha = 0.85; // softens the appearance
-
-    /* 🪽 WINGS */
+    /* 🪽 WINGS (TOP, CARTOON) */
     ctx.fillStyle = "#9dd9ff";
     ctx.strokeStyle = "#222";
     ctx.lineWidth = 3;
 
+    // Left wing
     ctx.save();
     ctx.rotate(-0.6 + wing);
     ctx.beginPath();
@@ -89,6 +87,7 @@ function drawBee() {
     ctx.stroke();
     ctx.restore();
 
+    // Right wing
     ctx.save();
     ctx.rotate(0.6 - wing);
     ctx.beginPath();
@@ -113,7 +112,7 @@ function drawBee() {
     ctx.ellipse(38, 10, 6, 18, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    /* 🟡 HEAD */
+    /* 🟡 HEAD (BIG & ROUND) */
     ctx.fillStyle = "#FFD400";
     ctx.beginPath();
     ctx.arc(-10, 0, 30, 0, Math.PI * 2);
@@ -122,11 +121,11 @@ function drawBee() {
 
     /* 😊 FACE */
     ctx.fillStyle = "#222";
-    ctx.beginPath();
+    ctx.beginPath(); // open eye
     ctx.arc(-18, -4, 4, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.beginPath();
+    ctx.beginPath(); // wink
     ctx.arc(-2, -4, 4, 0, Math.PI);
     ctx.stroke();
 
@@ -159,10 +158,6 @@ function drawBee() {
     ctx.fill();
 
     ctx.restore();
-
-    // Reset filters for future drawings
-    ctx.filter = "none";
-    ctx.globalAlpha = 1;
 }
 
 /* ===============================
