@@ -204,25 +204,39 @@ nav.scrolled {
 	align-items: center;
 }
 
-
+/* Logo container */
 .logo {
     display: flex;
     align-items: center;
-    gap: 10px;  /* a little more space */
+    gap: 10px;  /* space between logo and text */
 }
 
 /* Logo image */
 .logo-image {
-    width: 38px;          /* slightly bigger */
-    height: 38px;
-    object-fit: contain;
-    opacity: 0.85;        /* slightly transparent */
+    width: 44px;                 /* a bit bigger */
+    height: 44px;
+    border-radius: 50%;          /* make it round */
+    object-fit: cover;
+    opacity: 0.9;
+    animation: logoRotate 10s linear infinite; /* slow rotation */
+    box-shadow: 0 0 12px rgba(0, 255, 136, 0.4); /* soft glow (leaf-like) */
+}
+
+/* Rotation animation */
+@keyframes logoRotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* Prevent navbar overflow */
 nav {
     overflow-x: hidden;   /* important */
 }
+
 
 
 /* Optional hover glow effect */
@@ -1718,6 +1732,7 @@ footer {
     pointer-events: none;
     filter: blur(0.8px);
 }
+
 
 
 
