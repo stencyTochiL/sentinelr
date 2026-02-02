@@ -204,21 +204,26 @@ nav.scrolled {
 	align-items: center;
 }
 
-/* Logo container */
+
 .logo {
     display: flex;
     align-items: center;
     gap: 10px;  /* a little more space */
 }
-/* Logo Image */
-.logo-img {
-    width: 60px;                /* slightly bigger */
-    height: 60px;               /* maintain square for round shape */
-    border-radius: 50%;         /* makes it round */
-    object-fit: cover;          /* keeps the image centered and scaled */
-    box-shadow: 0 0 15px rgba(0, 255, 136, 0.4); /* glowy effect like leaf */
-    transition: all 0.3s ease;
+
+/* Logo image */
+.logo-image {
+    width: 38px;          /* slightly bigger */
+    height: 38px;
+    object-fit: contain;
+    opacity: 0.85;        /* slightly transparent */
 }
+
+/* Prevent navbar overflow */
+nav {
+    overflow-x: hidden;   /* important */
+}
+
 
 /* Optional hover glow effect */
 .logo-img:hover {
@@ -1713,6 +1718,7 @@ footer {
     pointer-events: none;
     filter: blur(0.8px);
 }
+
 
 
 
